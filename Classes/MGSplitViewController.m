@@ -249,6 +249,8 @@
 		navigationBarHeight = self.navigationController.navigationBar.frame.size.height;
 	}
 	
+	float toolbarHeight = self.navigationController.toolbar.frame.size.height;
+	
 	// Initially assume portrait orientation.
 	float width = fullScreenRect.size.width;
 	float height = fullScreenRect.size.height;
@@ -267,10 +269,6 @@
 	height -= statusBarHeight;
 	height -= navigationBarHeight;
 	height -= [self.bottomLayoutGuide length];
-	if (UIInterfaceOrientationIsPortrait(theOrientation))
-	{
-		height -= 20;
-	}
 	
 	return CGSizeMake(width, height);
 }
@@ -296,7 +294,7 @@
 	}
 	
 	// Layout the master, divider and detail views.
-	CGRect newFrame = CGRectMake(0, 0, width, height);
+	CGRect newFrame = CGRectMake(0, [self.topLayoutGuide length], width, height);
 	UIViewController *controller;
 	UIView *theView;
 	BOOL shouldShowMaster = [self shouldShowMasterForInterfaceOrientation:theOrientation];
