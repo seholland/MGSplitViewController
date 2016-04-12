@@ -249,8 +249,6 @@
 		navigationBarHeight = self.navigationController.navigationBar.frame.size.height;
 	}
 	
-	float toolbarHeight = self.navigationController.toolbar.frame.size.height;
-	
 	// Initially assume portrait orientation.
 	float width = fullScreenRect.size.width;
 	float height = fullScreenRect.size.height;
