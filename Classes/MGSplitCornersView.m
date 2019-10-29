@@ -61,7 +61,7 @@ static double deg2Rad(double degrees)
 {
 	// Draw two appropriate corners, with cornerBackgroundColor behind them.
 	if (cornerRadius > 0) {
-		if (NO) { // just for debugging.
+        if (/* DISABLES CODE */ (NO)) { // just for debugging.
 			[[UIColor redColor] set];
 			UIRectFill(self.bounds);
 		}
