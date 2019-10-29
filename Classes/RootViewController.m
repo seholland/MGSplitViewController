@@ -23,6 +23,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    if (@available(iOS 13.0, *)) {
+        self.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    } else {
+        // Fallback on earlier versions
+    }
     self.clearsSelectionOnViewWillAppear = NO;
 	// self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
 }
