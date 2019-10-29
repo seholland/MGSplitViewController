@@ -91,15 +91,6 @@
     self.popoverController = nil;
 }
 
-
-- (void)splitViewController:(MGSplitViewController*)svc 
-		  popoverController:(UIPopoverController*)pc
-  willPresentViewController:(UIViewController *)aViewController
-{
-	//NSLog(@"%@", NSStringFromSelector(_cmd));
-}
-
-
 - (void)splitViewController:(MGSplitViewController*)svc willChangeSplitOrientationToVertical:(BOOL)isVertical
 {
 	//NSLog(@"%@", NSStringFromSelector(_cmd));

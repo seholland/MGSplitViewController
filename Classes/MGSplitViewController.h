@@ -20,7 +20,7 @@ typedef enum _MGSplitViewDividerStyle {
 	BOOL _showsMasterInPortrait;
 	BOOL _showsMasterInLandscape;
 	float _splitWidth;
-	id _delegate;
+	__unsafe_unretained id _delegate;
 	BOOL _vertical;
 	BOOL _masterBeforeDetail;
 	NSMutableArray *_viewControllers;

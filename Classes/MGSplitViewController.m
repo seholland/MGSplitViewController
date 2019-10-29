@@ -773,13 +773,21 @@
 	
 }
 
+-(BOOL)isPopoverPresented
+{
+	if(!_hiddenPopoverController)
+		return NO;
+
+	return _hiddenPopoverController.parentViewController || _hiddenPopoverController.navigationController;
+}
+
 - (IBAction)toggleMasterPopover:(id)sender
 {
 	
 	if (!_hiddenPopoverController)
 		return;
 	
-	if (_hiddenPopoverController.isViewLoaded && _hiddenPopoverController.view.window) {
+	if (self.isPopoverPresented) {
 		
 		[self hideMasterPopover:sender];
 		
@@ -794,14 +802,20 @@
 
 - (IBAction)showMasterPopover:(id)sender
 {
-	if (_hiddenPopoverController && !(_hiddenPopoverController.isViewLoaded && _hiddenPopoverController.view.window)) {
+	if (_hiddenPopoverController && !(self.isPopoverPresented)) {
 		// Inform delegate.
 		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
 			[(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self
 																	 popoverController:_hiddenPopoverController
 															 willPresentViewController:self.masterViewController];
 		}
-		
+
+		_hiddenPopoverController.modalPresentationStyle = UIModalPresentationOverFullScreen | UIModalPresentationOverCurrentContext | UIModalPresentationPopover;
+		UIPopoverPresentationController *presentationController = [_hiddenPopoverController popoverPresentationController];
+		presentationController.barButtonItem = _barButtonItem;
+		presentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+		presentationController.delegate = self;
+
 		// Show popover.
 		[self presentViewController:_hiddenPopoverController animated: YES completion: nil];
 	}
@@ -811,7 +825,7 @@
 - (IBAction)hideMasterPopover:(id)sender
 {
 	
-	if(_hiddenPopoverController && _hiddenPopoverController.isViewLoaded && _hiddenPopoverController.view.window) {
+	if(_hiddenPopoverController && self.isPopoverPresented) {
 		
 		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willDismissViewController:)]) {
 			
@@ -1124,6 +1138,7 @@
 		}
 		else
 		{
+			[self.detailViewController.view removeFromSuperview];
 			[_viewControllers replaceObjectAtIndex:1 withObject:detail];
 		}
 		
