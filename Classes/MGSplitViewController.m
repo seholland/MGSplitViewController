@@ -167,66 +167,33 @@
 #pragma mark View management
 
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
+{
+    [coordinator animateAlongsideTransition:nil completion:^(id <UIViewControllerTransitionCoordinatorContext> context)
+    {
+        // Hide popover.
+        if (self->_hiddenPopoverController && self->_hiddenPopoverController.isViewLoaded && self->_hiddenPopoverController.view.window)
+        {
+            [self->_hiddenPopoverController dismissViewControllerAnimated:NO completion:nil];
+        }
+            
+        // Re-tile views.
+        self->_reconfigurePopup = YES;
+        [self layoutSubviewsForInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation] withAnimation:YES];
+
+    }];
+
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+}
+
+- (BOOL)shouldAutorotate
 {
 	if (self.detailViewController)
 	{
-		return [self.detailViewController shouldAutorotateToInterfaceOrientation:interfaceOrientation];
+		return [self.detailViewController shouldAutorotate];
 	}
 	
 	return YES;
-}
-
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-	[self.masterViewController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	[self.detailViewController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-}
-
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-	[self.masterViewController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-	[self.detailViewController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-}
-
-
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-										 duration:(NSTimeInterval)duration
-{
-	[self.masterViewController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	[self.detailViewController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	
-	// Hide popover.
-	if (_hiddenPopoverController && _hiddenPopoverController.isViewLoaded && _hiddenPopoverController.view.window) {
-		[_hiddenPopoverController dismissViewControllerAnimated:NO completion:nil];
-	}
-	
-	// Re-tile views.
-	_reconfigurePopup = YES;
-	[self layoutSubviewsForInterfaceOrientation:toInterfaceOrientation withAnimation:YES];
-}
-
-
-- (void)willAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-	[self.masterViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	[self.detailViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-}
-
-
-- (void)didAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-{
-	[self.masterViewController didAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation];
-	[self.detailViewController didAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation];
-}
-
-
-- (void)willAnimateSecondHalfOfRotationFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation duration:(NSTimeInterval)duration
-{
-	[self.masterViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
-	[self.detailViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
 }
 
 
@@ -234,7 +201,7 @@
 {
 	UIScreen *screen = [UIScreen mainScreen];
 	CGRect fullScreenRect = screen.bounds; // always implicitly in Portrait orientation.
-	CGRect appFrame = screen.applicationFrame;
+    CGRect appFrame = screen.bounds;
 	
 	// Find status bar height by checking which dimension of the applicationFrame is narrower than screen bounds.
 	// Little bit ugly looking, but it'll still work even if they change the status bar height in future.
@@ -266,7 +233,7 @@
 	// Account for status bar, which always subtracts from the height (since it's always at the top of the screen).
 	height -= statusBarHeight;
 	height -= navigationBarHeight;
-	height -= [self.bottomLayoutGuide length];
+	// height -= [self.bottomLayoutGuide length];
 	
 	return CGSizeMake(width, height);
 }
